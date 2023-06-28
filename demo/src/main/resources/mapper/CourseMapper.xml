@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CourseMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.pojo.Course">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+            <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+            <result property="courseTime" column="course_time" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="OTHER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,teacher_id,name,
+        description,start_time,end_time,
+        course_time,status
+    </sql>
+
+
+    <select id="selectByClassId" resultMap="BaseResultMap">
+
+        select <include refid="Base_Column_List"/> from course
+        where id in (select course_id from class_course where #{classId} = class_id)
+
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+
+        select <include refid="Base_Column_List"/> from course where id in (
+            select course_id from class_course where class_id in (
+                select class_id from schedules where student_id = #{userId}
+            )
+
+        )
+
+
+
+    </select>
+
+</mapper>
